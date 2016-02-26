@@ -16,7 +16,7 @@
 #include <sys/syscall.h>
 #include <errno.h>
 
-#define MAX_NUM_OF_HANDLERS 3
+#define MAX_NUM_OF_HANDLERS 6
 #define FTOK_PATH "/home/"
 #define FTOK_INT 'r'
 #define MSGLEN 50
@@ -52,6 +52,7 @@ void EndDistributor(void); //+/закрыть все открытое
 int AddHandler(void); //+/добавить обработчик, возвращает его номер
 int DeleteHandler(int num); //+/удалить обработчик по номеру
 void StartDistributor(void); //+/рабочий цикл
+void SigIntHandler(int);
 
 //-----------обработчик заявок-------------------
 void* ReqHandlerProc(void *arg); //+/главная задача - переделать Request в HandledRequest
@@ -65,10 +66,10 @@ int GetRequest(int num,struct Request* request);  //+/получить запрос из канала 
 int PutHandledRequest(int num, struct HandledRequest*hreq); //+/отправить обработанный запрос в канал
 
 //----------работа с очередью заявок-------------------
-int StartQueue(void); //создать очередь, в которую будут сыпаться сообщения типа Message, -1 ошибка
-int EndQueue(void); //закрыть очередь
-int GetFromQueue(struct Request *request); //забрать заявку из очереди
-int PutToQueue(struct Request *request); //положить заявку в очередь
+int StartQueue(void); //+/создать очередь, в которую будут сыпаться сообщения типа Message, -1 ошибка
+int EndQueue(void); //+/закрыть очередь
+int GetFromQueue(struct Request *request); //+/забрать заявку из очереди
+int PutToQueue(struct Request *request); //+/положить заявку в очередь
 
 //----------генератор заявок--------------
 int PutRequest(int num,struct Request *request); //+/отправить запрос в канал по номеру

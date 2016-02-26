@@ -1,6 +1,7 @@
 #include "service.h"
 
 int canals,fd[NUM_OF_CANALS];
+extern int end;
 
 //создание каналов, ведение их счета
 //возврат: -1 ошибка, номер канала при удаче (с 0), NUM_OF_CANALS при заполнении системы
@@ -12,7 +13,7 @@ int CreateCanal(char *path)
         return canals;
     }
     unlink(path);
-    fd[canals]=mkfifo(path,O_RDWR);
+    fd[canals]=mkfifo(path,0666);
     if(fd[canals]==-1)
     {
         perror("mkfifo\n");
@@ -24,7 +25,7 @@ int CreateCanal(char *path)
 
 int ConnectCanal(char *path, int num)
 {
-    fd[num]=open(path,O_RDWR);
+    fd[num]=open(path,0666);
     if(fd[num]==-1)
     {
         perror("open err\n");
@@ -48,7 +49,10 @@ int GetRequest(int num,struct Request* request)
     chk=read(fd[num],request,sizeof(struct Request));
     if(chk==-1)
     {
-        perror("read error");
+        if(end==0)
+        {
+            perror("read error\n");
+        }
         return -1;
     }
     return 0;
@@ -60,7 +64,10 @@ int PutHandledRequest(int num,struct HandledRequest* hreq)
     chk=write(fd[num],hreq,sizeof(struct HandledRequest));
     if(chk==-1)
     {
-        perror("write error");
+        if(end==0)
+        {
+            perror("write error\n");
+        }
         return -1;
     }
     return 0;

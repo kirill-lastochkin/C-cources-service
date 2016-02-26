@@ -1,7 +1,7 @@
 #include "service.h"
 
 int NumOfHandler,getr,putr,end;
-pthread_t handler[MAX_NUM_OF_HANDLERS];
+pthread_t handlerr[MAX_NUM_OF_HANDLERS];
 extern int canals;
 
 //инициализация работы распределителя
@@ -13,6 +13,7 @@ void InitDistributor(void)
     end=0;
     canals=0;
     getr=0; putr=1;
+    signal(SIGINT,SigIntHandler);
     chk=CreateCanal(FIFOPATH1);
     if(chk==-1)
     {
@@ -69,7 +70,7 @@ int AddHandler(void)
 {
     int n;
     n=NumOfHandler;
-    pthread_create(&handler[NumOfHandler],NULL,ReqHandlerProc,&n);
+    pthread_create(&handlerr[NumOfHandler],NULL,ReqHandlerProc,&n);
     NumOfHandler++;
     return NumOfHandler;
 }
@@ -77,7 +78,7 @@ int AddHandler(void)
 //сигнал отмены потоку
 int DeleteHandler(int num)
 {
-    pthread_cancel(handler[num-1]);
+    pthread_cancel(handlerr[num-1]);
 }
 
 //циклическая функция работы распределителя
@@ -91,4 +92,10 @@ void StartDistributor(void)
         PutToQueue(&req1);
     }
 
+}
+
+void SigIntHandler(int num)
+{
+    EndDistributor();
+    end=1;
 }

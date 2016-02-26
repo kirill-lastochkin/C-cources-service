@@ -12,7 +12,8 @@ int main(void)
 {
     InitDistributor();
     StartDistributor();
-    EndDistributor();
+    //EndDistributor();
+    printf("succesfully ended!\n");
     return 0;
 }
 #endif
@@ -27,7 +28,7 @@ int main(void)
     ConnectCanal(FIFOPATH1,nput);
     ConnectCanal(FIFOPATH2,nget);
     pthread_create(&putproc,NULL,PutThr,&nput);
-    pthread_create(getproc,NULL,GetThr,&nget);
+    pthread_create(&getproc,NULL,GetThr,&nget);
     pthread_join(putproc,NULL);
     pthread_join(getproc,NULL);
     DisconnectCanal(nput);
